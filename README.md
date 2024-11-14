@@ -51,7 +51,7 @@ Installation
 
     Clone the repository using git:
 
-git clone https://github.com/yourusername/TokenTally.git
+git clone https://github.com/Flaxcon/TokenTally.git
 
 Or download the ZIP file and extract it to your preferred location.
 
