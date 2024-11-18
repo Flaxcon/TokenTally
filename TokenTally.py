@@ -1,106 +1,195 @@
 import sys
 import os
+import tempfile
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QLabel, QPushButton, QVBoxLayout,
     QHBoxLayout, QFileDialog, QLineEdit, QColorDialog, QSpinBox,
-    QMessageBox, QGroupBox, QFormLayout
+    QMessageBox, QGroupBox, QFormLayout, QMenu, QAction, QSizePolicy,
+    QRadioButton, QScrollArea
 )
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QPixmap, QPainter, QColor, QFont
+from PyQt5.QtCore import Qt, pyqtSignal, QRectF, QPointF, QTimer
+from PyQt5.QtGui import (
+    QPixmap, QPainter, QColor, QFont, QClipboard, QPainterPath,
+    QBrush, QPen, QLinearGradient, QImage, QTransform
+)
 
 
 class ImageDropLabel(QLabel):
     image_dropped = pyqtSignal(str)
+    image_pasted = pyqtSignal(str)
+    transformation_changed = pyqtSignal()
 
-    def __init__(self, parent=None):
+    def __init__(self, main_window, parent=None):
         super().__init__(parent)
+        self.main_window = main_window  # Reference to the main window
         self.setAlignment(Qt.AlignCenter)
-        self.setText('Image Preview Will Appear Here')
         self.setAcceptDrops(True)
-        print("Initialized ImageDropLabel")
+        self.setMouseTracking(True)
+
+        # For panning
+        self.setCursor(Qt.OpenHandCursor)
+        self.is_panning = False
+        self.last_mouse_pos = QPointF()
+
+        # Image manipulation variables
+        self.scale_factor = 1.0
+        self.translation = QPointF(0, 0)
+
+        # Set initial size
+        self.update_preview_size()
+
+        # Adjust size policy
+        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+
+    def update_preview_size(self):
+        if self.main_window.mode == "cropping":
+            self.setFixedSize(200, 200)
+            self.setStyleSheet("border: 2px dashed #aaa; background-color: #fff;")
+        else:
+            self.setFixedSize(self.main_window.output_width, self.main_window.output_height)
+            self.setStyleSheet("border: 1px solid #aaa; background-color: #fff;")
+        self.update()
+
+    def set_pixmap(self, pixmap):
+        self.main_window.original_pixmap = pixmap
+        self.scale_factor = 1.0
+        self.translation = QPointF(0, 0)
+        self.update()
 
     def dragEnterEvent(self, event):
-        print("Drag Enter Event")
         if event.mimeData().hasUrls():
             urls = event.mimeData().urls()
-            print(f"Dragged URLs: {urls}")
             if len(urls) == 1:
                 url = urls[0]
                 if url.isLocalFile():
                     file_path = url.toLocalFile()
                     if file_path.lower().endswith(('.webp', '.png', '.jpg', '.jpeg')):
                         event.acceptProposedAction()
-                        print("Accepted image file")
-                    else:
-                        event.ignore()
-                        print("Ignored non-image file")
+                        return
                 else:
-                    event.ignore()
-                    print("Ignored non-local file")
-            else:
-                event.ignore()
-                print("Ignored multiple files")
-        else:
-            event.ignore()
-            print("Ignored non-URL drag")
+                    event.acceptProposedAction()
+                    return
+        event.ignore()
 
     def dropEvent(self, event):
-        print("Drop Event")
         if event.mimeData().hasUrls():
             url = event.mimeData().urls()[0]
             if url.isLocalFile():
                 file_path = url.toLocalFile()
-                print(f"Dropped file path: {file_path}")
                 if file_path.lower().endswith(('.webp', '.png', '.jpg', '.jpeg')):
                     self.image_dropped.emit(file_path)
-                    print("Emitted image_dropped signal")
-                else:
-                    print("Dropped file is not a supported image")
+                    return
             else:
-                print("Dropped file is not a local file")
+                image_data = event.mimeData().data('application/octet-stream')
+                if image_data:
+                    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+                    temp_file.write(image_data)
+                    temp_file.close()
+                    self.image_dropped.emit(temp_file.name)
+                    return
+        event.ignore()
+
+    def contextMenuEvent(self, event):
+        menu = QMenu(self)
+        paste_action = QAction("Paste Image", self)
+        paste_action.triggered.connect(self.paste_image)
+        menu.addAction(paste_action)
+        menu.exec_(event.globalPos())
+
+    def paste_image(self):
+        clipboard = QApplication.clipboard()
+        mime_data = clipboard.mimeData()
+        if mime_data.hasImage():
+            image = clipboard.image()
+            if not image.isNull():
+                temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+                image.save(temp_file.name, "PNG")
+                temp_file.close()
+                self.image_pasted.emit(temp_file.name)
+            else:
+                QMessageBox.warning(self, "Paste Error", "Failed to paste image from clipboard.")
         else:
-            event.ignore()
-            print("Ignored non-URL drop")
+            QMessageBox.warning(self, "Paste Error", "Clipboard does not contain an image.")
+
+    def mousePressEvent(self, event):
+        if self.main_window.mode == "cropping":
+            if event.button() == Qt.LeftButton and self.main_window.original_pixmap:
+                self.setCursor(Qt.ClosedHandCursor)
+                self.is_panning = True
+                self.last_mouse_pos = event.pos() - self.translation
+
+    def mouseMoveEvent(self, event):
+        if self.main_window.mode == "cropping":
+            if self.is_panning and self.main_window.original_pixmap:
+                self.translation = event.pos() - self.last_mouse_pos
+                self.update()
+                self.transformation_changed.emit()
+
+    def mouseReleaseEvent(self, event):
+        if self.main_window.mode == "cropping":
+            if event.button() == Qt.LeftButton and self.main_window.original_pixmap:
+                self.setCursor(Qt.OpenHandCursor)
+                self.is_panning = False
+
+    def wheelEvent(self, event):
+        if self.main_window.mode == "cropping":
+            if self.main_window.original_pixmap:
+                angle = event.angleDelta().y()
+                factor = 1.15 if angle > 0 else 0.85
+                self.scale_factor *= factor
+                self.scale_factor = max(0.1, min(self.scale_factor, 10))
+                self.update()
+                self.transformation_changed.emit()
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        if self.main_window.original_pixmap:
+            rendered_pixmap = self.main_window.render_image(
+                self.width(), self.height(), self.main_window.overlay_text, preview=True
+            )
+            painter.drawPixmap(0, 0, rendered_pixmap)
+        else:
+            painter.fillRect(self.rect(), Qt.white)
+            painter.setPen(Qt.black)
+            painter.drawText(self.rect(), Qt.AlignCenter, "Image Preview Will Appear Here")
 
 
 class ImageToPNGConverter(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Image to PNG Converter with Overlay")
-        self.setGeometry(100, 100, 800, 900)
-        self.setFixedSize(800, 900)
+        self.setWindowTitle("TokenTally - Token Numbering Tool")
+        self.setGeometry(100, 100, 400, 800)  # Increased height to accommodate new settings
+        self.setMinimumSize(400, 800)
 
         # Initialize variables
         self.image_path = None
-        self.original_pixmap = None  # QPixmap
-        self.modified_pixmap = None  # QPixmap
+        self.original_pixmap = None
         self.overlay_text = ""
         self.font_size = 36
-        self.font_color = QColor(255, 255, 255)  # White by default
-
-        # Position variables
-        self.padding = 10  # Initial padding from the edges
-        self.x_offset = 0  # Horizontal offset from default position
-        self.y_offset = 0  # Vertical offset from default position
-        self.step = 5  # Pixels to move per arrow press
-
-        # Batch processing variables
+        self.font_color = QColor(255, 255, 255)
+        self.overlay_x_offset = 0
+        self.overlay_y_offset = 0
+        self.batch_start_spin = QSpinBox()
+        self.batch_end_spin = QSpinBox()
         self.batch_start = 1
         self.batch_end = 1
-
-        # Save directory
-        self.save_directory = None  # If None, save to original image directory
-
-        # Output dimensions
+        self.save_directory = None
         self.output_width = 200
         self.output_height = 200
-        self.output_dpi = 96  # Dots Per Inch
+        self.output_dpi = 96
+        self.scale_factor = 1.0
+        self.translation = QPointF(0, 0)
+        self.temp_files = []
+        self.mode = "cropping"
+
+        # Initialize gradient colors
+        self.gradient_start_color = QColor(255, 255, 255, 0)  # Transparent white
+        self.gradient_end_color = QColor(0, 0, 0, 255)        # Opaque black
 
         # Setup UI
         self.setup_ui()
 
     def setup_ui(self):
-        # Main layout
         main_layout = QVBoxLayout()
 
         # File Picker Layout
@@ -113,143 +202,156 @@ class ImageToPNGConverter(QWidget):
         file_picker_layout.addWidget(self.file_label)
         main_layout.addLayout(file_picker_layout)
 
+        # Mode Selection
+        mode_group = QGroupBox("Mode Selection")
+        mode_layout = QHBoxLayout()
+        self.cropping_mode_radio = QRadioButton("Cropping Mode")
+        self.cropping_mode_radio.setChecked(True)
+        self.cropping_mode_radio.toggled.connect(self.change_mode)
+        self.conversion_mode_radio = QRadioButton("Conversion Mode")
+        mode_layout.addWidget(self.cropping_mode_radio)
+        mode_layout.addWidget(self.conversion_mode_radio)
+        mode_group.setLayout(mode_layout)
+        main_layout.addWidget(mode_group)
+
         # Image Display
-        self.image_label = ImageDropLabel()
-        self.image_label.setFixedSize(760, 400)
-        self.image_label.setStyleSheet("border: 2px dashed #aaa;")
+        self.image_label = ImageDropLabel(self)
         self.image_label.image_dropped.connect(self.handle_dropped_image)
-        main_layout.addWidget(self.image_label, alignment=Qt.AlignCenter)
+        self.image_label.image_pasted.connect(self.handle_pasted_image)
+        self.image_label.transformation_changed.connect(self.update_preview)
+
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setAlignment(Qt.AlignCenter)
+        scroll_area.setWidget(self.image_label)
+        main_layout.addWidget(scroll_area)
 
         # Overlay Settings Group
-        overlay_group = QGroupBox("Overlay Settings")
+        self.overlay_group = QGroupBox("Overlay Settings")
         overlay_layout = QFormLayout()
-
-        # Overlay Text Input
         self.text_input = QLineEdit()
-        self.text_input.setMaxLength(2)
+        self.text_input.setMaxLength(10)
         self.text_input.textChanged.connect(self.update_overlay_text)
-        overlay_layout.addRow("Enter 1 or 2 Digits:", self.text_input)
-
-        # Font Size Selector
+        overlay_layout.addRow("Overlay Text:", self.text_input)
         self.font_size_spin = QSpinBox()
         self.font_size_spin.setRange(10, 100)
         self.font_size_spin.setValue(self.font_size)
         self.font_size_spin.valueChanged.connect(self.update_font_size)
         overlay_layout.addRow("Font Size:", self.font_size_spin)
-
-        # Font Color Picker
         self.color_button = QPushButton("Choose Font Color")
         self.color_button.clicked.connect(self.choose_color)
         self.color_button.setStyleSheet(f"background-color: {self.font_color.name()}")
         overlay_layout.addRow("Font Color:", self.color_button)
+        position_layout = QHBoxLayout()
+        self.left_button = QPushButton("\u2190")
+        self.left_button.pressed.connect(lambda: self.start_moving_overlay("left"))
+        self.right_button = QPushButton("\u2192")
+        self.right_button.pressed.connect(lambda: self.start_moving_overlay("right"))
+        self.up_button = QPushButton("\u2191")
+        self.up_button.pressed.connect(lambda: self.start_moving_overlay("up"))
+        self.down_button = QPushButton("\u2193")
+        self.down_button.pressed.connect(lambda: self.start_moving_overlay("down"))
+        for btn in [self.left_button, self.right_button, self.up_button, self.down_button]:
+            btn.released.connect(self.stop_moving_overlay)
+        position_layout.addWidget(self.left_button)
+        position_layout.addWidget(self.right_button)
+        position_layout.addWidget(self.up_button)
+        position_layout.addWidget(self.down_button)
+        overlay_layout.addRow("Move Text:", position_layout)
+        self.overlay_group.setLayout(overlay_layout)
+        main_layout.addWidget(self.overlay_group)
 
-        # Add form layout to group
-        overlay_group.setLayout(overlay_layout)
-        main_layout.addWidget(overlay_group)
-
-        # Repositioning Buttons Group
-        reposition_group = QGroupBox("Reposition Overlay")
-        reposition_layout = QHBoxLayout()
-
-        # Up Button
-        self.up_button = QPushButton("↑")
-        self.up_button.clicked.connect(self.move_up)
-        reposition_layout.addWidget(self.up_button)
-
-        # Down Button
-        self.down_button = QPushButton("↓")
-        self.down_button.clicked.connect(self.move_down)
-        reposition_layout.addWidget(self.down_button)
-
-        # Left Button
-        self.left_button = QPushButton("←")
-        self.left_button.clicked.connect(self.move_left)
-        reposition_layout.addWidget(self.left_button)
-
-        # Right Button
-        self.right_button = QPushButton("→")
-        self.right_button.clicked.connect(self.move_right)
-        reposition_layout.addWidget(self.right_button)
-
-        reposition_group.setLayout(reposition_layout)
-        main_layout.addWidget(reposition_group, alignment=Qt.AlignCenter)
-
-        # Batch Processing Group
-        batch_group = QGroupBox("Batch Overlay Settings")
-        batch_layout = QFormLayout()
-
-        # Start Number
-        self.batch_start_spin = QSpinBox()
-        self.batch_start_spin.setRange(1, 9999)
-        self.batch_start_spin.setValue(1)
-        batch_layout.addRow("Start Number:", self.batch_start_spin)
-
-        # End Number
-        self.batch_end_spin = QSpinBox()
-        self.batch_end_spin.setRange(1, 9999)
-        self.batch_end_spin.setValue(1)
-        batch_layout.addRow("End Number:", self.batch_end_spin)
-
-        batch_group.setLayout(batch_layout)
-        main_layout.addWidget(batch_group)
+        # Gradient Settings Group
+        self.gradient_group = QGroupBox("Gradient Settings")
+        gradient_layout = QFormLayout()
+        self.gradient_start_button = QPushButton("Choose Gradient Start Color")
+        self.gradient_start_button.clicked.connect(self.choose_gradient_start_color)
+        self.gradient_start_button.setStyleSheet(f"background-color: {self.gradient_start_color.name()}")
+        gradient_layout.addRow("Start Color:", self.gradient_start_button)
+        self.gradient_end_button = QPushButton("Choose Gradient End Color")
+        self.gradient_end_button.clicked.connect(self.choose_gradient_end_color)
+        self.gradient_end_button.setStyleSheet(f"background-color: {self.gradient_end_color.name()}")
+        gradient_layout.addRow("End Color:", self.gradient_end_button)
+        self.gradient_group.setLayout(gradient_layout)
+        main_layout.addWidget(self.gradient_group)
 
         # Output Settings Group
-        output_group = QGroupBox("Output Settings")
+        self.output_group = QGroupBox("Output Settings")
         output_layout = QFormLayout()
-
-        # Output Width
         self.output_width_spin = QSpinBox()
         self.output_width_spin.setRange(50, 5000)
         self.output_width_spin.setValue(self.output_width)
         self.output_width_spin.valueChanged.connect(self.update_output_dimensions)
         output_layout.addRow("Output Width (px):", self.output_width_spin)
-
-        # Output Height
         self.output_height_spin = QSpinBox()
         self.output_height_spin.setRange(50, 5000)
         self.output_height_spin.setValue(self.output_height)
         self.output_height_spin.valueChanged.connect(self.update_output_dimensions)
         output_layout.addRow("Output Height (px):", self.output_height_spin)
-
-        # Output DPI
         self.output_dpi_spin = QSpinBox()
         self.output_dpi_spin.setRange(72, 600)
         self.output_dpi_spin.setValue(self.output_dpi)
         self.output_dpi_spin.valueChanged.connect(self.update_output_dpi)
         output_layout.addRow("Output DPI:", self.output_dpi_spin)
-
-        output_group.setLayout(output_layout)
-        main_layout.addWidget(output_group)
-
-        # Save Directory Selection
-        save_dir_layout = QHBoxLayout()
+        self.batch_start_spin.setRange(1, 9999)
+        self.batch_start_spin.setValue(self.batch_start)
+        output_layout.addRow("Batch Start Number:", self.batch_start_spin)
+        self.batch_end_spin.setRange(1, 9999)
+        self.batch_end_spin.setValue(self.batch_end)
+        output_layout.addRow("Batch End Number:", self.batch_end_spin)
         self.save_dir_button = QPushButton("Select Save Directory")
         self.save_dir_button.clicked.connect(self.select_save_directory)
-        save_dir_layout.addWidget(self.save_dir_button)
-        self.save_dir_label = QLabel("Saving to original directory.")
-        save_dir_layout.addWidget(self.save_dir_label)
-        main_layout.addLayout(save_dir_layout)
+        output_layout.addRow("Save Directory:", self.save_dir_button)
+        self.output_group.setLayout(output_layout)
+        main_layout.addWidget(self.output_group)
 
         # Save Button
         self.save_button = QPushButton("Save as PNG")
         self.save_button.setEnabled(False)
         self.save_button.clicked.connect(self.save_image)
         main_layout.addWidget(self.save_button, alignment=Qt.AlignRight)
-
         self.setLayout(main_layout)
 
+        # Timer for overlay movement
+        self.movement_timer = QTimer()
+        self.movement_timer.timeout.connect(self.move_overlay)
+        self.movement_direction = None
+
+    def change_mode(self):
+        if self.cropping_mode_radio.isChecked():
+            self.mode = "cropping"
+            self.output_width_spin.setEnabled(False)
+            self.output_height_spin.setEnabled(False)
+            self.output_width = 200
+            self.output_height = 200
+            self.output_width_spin.setValue(self.output_width)
+            self.output_height_spin.setValue(self.output_height)
+            self.overlay_group.setEnabled(True)
+            self.gradient_group.setEnabled(True)
+        else:
+            self.mode = "conversion"
+            self.output_width_spin.setEnabled(True)
+            self.output_height_spin.setEnabled(True)
+            self.overlay_group.setEnabled(True)
+            self.gradient_group.setEnabled(True)
+        self.image_label.update_preview_size()
+        self.image_label.update()
+
     def handle_dropped_image(self, file_path):
-        if not file_path.lower().endswith(('.webp', '.png', '.jpg', '.jpeg')):
-            QMessageBox.critical(self, "Invalid File", "Please drop a valid image file (.webp, .png, .jpg, .jpeg).")
-            return
         self.image_path = file_path
         self.file_label.setText(os.path.basename(file_path))
-        self.load_image()
+        self.load_image_from_path()
+        self.save_button.setEnabled(True)
+
+    def handle_pasted_image(self, file_path):
+        self.image_path = file_path
+        self.temp_files.append(file_path)
+        self.file_label.setText("Pasted Image")
+        self.load_image_from_path()
         self.save_button.setEnabled(True)
 
     def open_file_dialog(self):
         options = QFileDialog.Options()
-        # Allow selection of .webp, .png, .jpg, and .jpeg files
         file_filter = "Image Files (*.webp *.png *.jpg *.jpeg);;All Files (*)"
         file_path, _ = QFileDialog.getOpenFileName(
             self,
@@ -264,129 +366,59 @@ class ImageToPNGConverter(QWidget):
                 return
             self.image_path = file_path
             self.file_label.setText(os.path.basename(file_path))
-            self.load_image()
+            self.load_image_from_path()
             self.save_button.setEnabled(True)
 
-    def load_image(self):
+    def load_image_from_path(self):
         try:
-            # Load image as QPixmap
             pixmap = QPixmap(self.image_path)
             if pixmap.isNull():
                 raise ValueError("Failed to load image. The file may be corrupted or unsupported.")
-            # Resize pixmap to output dimensions while keeping aspect ratio
-            self.original_pixmap = pixmap.scaled(
-                self.output_width,
-                self.output_height,
-                Qt.KeepAspectRatio,
-                Qt.SmoothTransformation
-            )
-            self.modified_pixmap = self.original_pixmap.copy()
-            self.image_label.setPixmap(self.modified_pixmap)
-            self.image_label.setText("")
-            # Do NOT reset position offsets to maintain overlay position
-            # Reset batch settings
-            self.batch_start_spin.setValue(1)
-            self.batch_end_spin.setValue(1)
+            self.image_label.set_pixmap(pixmap)
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to load image.\n{e}")
-            self.image_label.setText("Image Preview Will Appear Here")
             self.save_button.setEnabled(False)
-
-    def update_overlay_text(self, text):
-        if len(text) > 2:
-            self.text_input.setText(text[:2])
-            return
-        self.overlay_text = text
-        self.apply_overlay()
-        self.display_image()
-
-    def update_font_size(self, size):
-        self.font_size = size
-        self.apply_overlay()
-        self.display_image()
 
     def choose_color(self):
         color = QColorDialog.getColor(initial=self.font_color, title="Select Font Color")
         if color.isValid():
             self.font_color = color
             self.color_button.setStyleSheet(f"background-color: {self.font_color.name()}")
-            self.apply_overlay()
-            self.display_image()
+            self.image_label.update()
+
+    def choose_gradient_start_color(self):
+        color = QColorDialog.getColor(initial=self.gradient_start_color, title="Select Gradient Start Color")
+        if color.isValid():
+            self.gradient_start_color = color
+            self.gradient_start_button.setStyleSheet(f"background-color: {self.gradient_start_color.name()}")
+            self.image_label.update()
+
+    def choose_gradient_end_color(self):
+        color = QColorDialog.getColor(initial=self.gradient_end_color, title="Select Gradient End Color")
+        if color.isValid():
+            self.gradient_end_color = color
+            self.gradient_end_button.setStyleSheet(f"background-color: {self.gradient_end_color.name()}")
+            self.image_label.update()
+
+    def update_overlay_text(self, text):
+        if len(text) > 10:
+            self.text_input.setText(text[:10])
+            return
+        self.overlay_text = text
+        self.image_label.update()
+
+    def update_font_size(self, size):
+        self.font_size = size
+        self.image_label.update()
 
     def update_output_dimensions(self):
         self.output_width = self.output_width_spin.value()
         self.output_height = self.output_height_spin.value()
-        # If an image is already loaded, resize it accordingly
-        if self.original_pixmap:
-            self.original_pixmap = self.original_pixmap.scaled(
-                self.output_width,
-                self.output_height,
-                Qt.KeepAspectRatio,
-                Qt.SmoothTransformation
-            )
-            self.modified_pixmap = self.original_pixmap.copy()
-            self.apply_overlay()
-            self.display_image()
+        self.image_label.update_preview_size()
+        self.image_label.update()
 
     def update_output_dpi(self):
         self.output_dpi = self.output_dpi_spin.value()
-
-    def apply_overlay(self):
-        if not self.original_pixmap:
-            return
-        # Start with original pixmap
-        self.modified_pixmap = self.original_pixmap.copy()
-
-        if self.overlay_text:
-            painter = QPainter(self.modified_pixmap)
-            try:
-                painter.setRenderHint(QPainter.Antialiasing)
-                # Set font
-                font = QFont("Arial", self.font_size)
-                painter.setFont(font)
-                # Set color
-                painter.setPen(self.font_color)
-                # Calculate position: Bottom Right with padding and offset
-                metrics = painter.fontMetrics()
-                text_width = metrics.horizontalAdvance(self.overlay_text)
-                text_height = metrics.height()
-                x = self.modified_pixmap.width() - text_width - self.padding + self.x_offset
-                y = self.modified_pixmap.height() - self.padding + self.y_offset
-                # Ensure text is within image boundaries
-                x = max(0, min(x, self.modified_pixmap.width() - text_width))
-                y = max(text_height, min(y, self.modified_pixmap.height()))
-                # Draw text
-                painter.drawText(x, y, self.overlay_text)
-            except Exception as e:
-                QMessageBox.critical(self, "Drawing Error", f"Failed to draw text on image.\n{e}")
-            finally:
-                painter.end()
-
-    def display_image(self):
-        if self.modified_pixmap:
-            self.image_label.setPixmap(self.modified_pixmap)
-        else:
-            self.image_label.setText("Image Preview Will Appear Here")
-
-    def move_up(self):
-        self.y_offset -= self.step
-        self.apply_overlay()
-        self.display_image()
-
-    def move_down(self):
-        self.y_offset += self.step
-        self.apply_overlay()
-        self.display_image()
-
-    def move_left(self):
-        self.x_offset -= self.step
-        self.apply_overlay()
-        self.display_image()
-
-    def move_right(self):
-        self.x_offset += self.step
-        self.apply_overlay()
-        self.display_image()
 
     def select_save_directory(self):
         directory = QFileDialog.getExistingDirectory(
@@ -397,14 +429,88 @@ class ImageToPNGConverter(QWidget):
         )
         if directory:
             self.save_directory = directory
-            self.save_dir_label.setText(directory)
+
+    def update_preview(self):
+        self.image_label.update()
+
+    def start_moving_overlay(self, direction):
+        self.movement_direction = direction
+        self.movement_timer.start(50)
+
+    def stop_moving_overlay(self):
+        self.movement_timer.stop()
+
+    def move_overlay(self):
+        if self.movement_direction == "left":
+            self.overlay_x_offset -= 5
+        elif self.movement_direction == "right":
+            self.overlay_x_offset += 5
+        elif self.movement_direction == "up":
+            self.overlay_y_offset -= 5
+        elif self.movement_direction == "down":
+            self.overlay_y_offset += 5
+        self.image_label.update()
+
+    def render_image(self, width, height, overlay_text, preview=False):
+        final_pixmap = QPixmap(width, height)
+        final_pixmap.fill(Qt.transparent)
+        painter = QPainter(final_pixmap)
+        painter.setRenderHint(QPainter.Antialiasing)
+
+        if self.mode == "cropping":
+            path = QPainterPath()
+            path.addEllipse(0, 0, width, height)
+            painter.setClipPath(path)
+
+            transform = QTransform()
+            scale_x = self.image_label.scale_factor
+            scale_y = self.image_label.scale_factor
+            trans_x = self.image_label.translation.x()
+            trans_y = self.image_label.translation.y()
+            transform.translate(trans_x + width / 2, trans_y + height / 2)
+            transform.scale(scale_x, scale_y)
+            painter.setTransform(transform)
+
+            if self.original_pixmap:
+                image_center = QPointF(self.original_pixmap.width() / 2, self.original_pixmap.height() / 2)
+                painter.drawPixmap(-image_center, self.original_pixmap)
+
+            painter.resetTransform()
+            painter.setClipping(False)
+
+            gradient = QLinearGradient(0, 0, width, height)
+            gradient.setColorAt(0, self.gradient_start_color)
+            gradient.setColorAt(1, self.gradient_end_color)
+            pen = QPen(QBrush(gradient), 10)
+            painter.setPen(pen)
+            painter.drawEllipse(5, 5, width - 10, height - 10)
+
+        else:
+            if self.original_pixmap:
+                scaled_pixmap = self.original_pixmap.scaled(width, height, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                x = (width - scaled_pixmap.width()) / 2
+                y = (height - scaled_pixmap.height()) / 2
+                painter.drawPixmap(QPointF(x, y), scaled_pixmap)
+
+        if overlay_text:
+            font = QFont("Arial", self.font_size)
+            painter.setFont(font)
+            painter.setPen(self.font_color)
+            metrics = painter.fontMetrics()
+            text_width = metrics.horizontalAdvance(overlay_text)
+            text_height = metrics.ascent()
+            x = self.overlay_x_offset + width / 2 - text_width / 2
+            y = self.overlay_y_offset + height / 2 + text_height / 2
+            painter.drawText(QPointF(x, y), overlay_text)
+
+        painter.end()
+        return final_pixmap
 
     def save_image(self):
         if not self.original_pixmap:
             QMessageBox.warning(self, "No Image", "There is no image to save.")
             return
 
-        # Get batch range
         start_num = self.batch_start_spin.value()
         end_num = self.batch_end_spin.value()
 
@@ -412,72 +518,39 @@ class ImageToPNGConverter(QWidget):
             QMessageBox.critical(self, "Invalid Range", "Start Number must be less than or equal to End Number.")
             return
 
-        # Get base filename without extension
-        base_name = os.path.splitext(os.path.basename(self.image_path))[0]
+        if self.image_path:
+            base_name = os.path.splitext(os.path.basename(self.image_path))[0]
+        else:
+            base_name = "pasted_image"
 
-        # Determine save directory
-        save_dir = self.save_directory if self.save_directory else os.path.dirname(self.image_path)
+        save_dir = self.save_directory if self.save_directory else os.path.dirname(self.image_path) if self.image_path else os.getcwd()
 
-        # Iterate over the range and save each image
         for num in range(start_num, end_num + 1):
-            if not self.overlay_text:
-                # If no overlay text, save original image with number appended
-                modified_pixmap = self.original_pixmap.copy()
-            else:
-                # Create a copy for each number
-                modified_pixmap = self.original_pixmap.copy()
-                painter = QPainter(modified_pixmap)
-                try:
-                    painter.setRenderHint(QPainter.Antialiasing)
-                    # Set font
-                    font = QFont("Arial", self.font_size)
-                    painter.setFont(font)
-                    # Set color
-                    painter.setPen(self.font_color)
-                    # Prepare text
-                    text = str(num)
-                    # Calculate position
-                    metrics = painter.fontMetrics()
-                    text_width = metrics.horizontalAdvance(text)
-                    text_height = metrics.height()
-                    x = modified_pixmap.width() - text_width - self.padding + self.x_offset
-                    y = modified_pixmap.height() - self.padding + self.y_offset
-                    # Ensure text is within image boundaries
-                    x = max(0, min(x, modified_pixmap.width() - text_width))
-                    y = max(text_height, min(y, modified_pixmap.height()))
-                    # Draw text
-                    painter.drawText(x, y, text)
-                except Exception as e:
-                    QMessageBox.critical(self, "Drawing Error", f"Failed to draw text on image {num}.\n{e}")
-                    painter.end()
-                    continue  # Skip saving this image
-                finally:
-                    painter.end()
+            overlay_text = self.overlay_text if self.overlay_text else str(num)
+            rendered_pixmap = self.render_image(self.output_width, self.output_height, overlay_text)
 
-            # Resize to output dimensions
-            resized_pixmap = modified_pixmap.scaled(
-                self.output_width,
-                self.output_height,
-                Qt.IgnoreAspectRatio,
-                Qt.SmoothTransformation
-            )
-
-            # Convert QPixmap to QImage to set DPI
-            image = resized_pixmap.toImage()
-            image.setDotsPerMeterX(int(self.output_dpi * 39.3701))  # 1 inch = 39.3701 meters
+            image = rendered_pixmap.toImage()
+            image.setDotsPerMeterX(int(self.output_dpi * 39.3701))
             image.setDotsPerMeterY(int(self.output_dpi * 39.3701))
 
-            # Define output path
             output_filename = f"{base_name}{num}.png"
             output_path = os.path.join(save_dir, output_filename)
 
-            # Save as PNG with DPI
             success = image.save(output_path, "PNG")
             if not success:
                 QMessageBox.critical(self, "Save Failed", f"Failed to save image {output_filename}.")
                 continue
 
         QMessageBox.information(self, "Success", f"Images saved from {start_num} to {end_num} in {save_dir}")
+        self.cleanup_temp_files()
+
+    def cleanup_temp_files(self):
+        for temp_file in self.temp_files:
+            try:
+                os.unlink(temp_file)
+            except Exception as e:
+                print(f"Error deleting temporary file {temp_file}: {e}")
+        self.temp_files = []
 
 
 def main():
