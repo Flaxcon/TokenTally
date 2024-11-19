@@ -518,6 +518,9 @@ class ImageToPNGConverter(QWidget):
             QMessageBox.critical(self, "Invalid Range", "Start Number must be less than or equal to End Number.")
             return
 
+        # Determine if batch processing is active
+        is_batch = end_num - start_num >= 1
+
         if self.image_path:
             base_name = os.path.splitext(os.path.basename(self.image_path))[0]
         else:
@@ -526,7 +529,17 @@ class ImageToPNGConverter(QWidget):
         save_dir = self.save_directory if self.save_directory else os.path.dirname(self.image_path) if self.image_path else os.getcwd()
 
         for num in range(start_num, end_num + 1):
-            overlay_text = self.overlay_text if self.overlay_text else str(num)
+            if is_batch:
+                if self.overlay_text == "1":
+                    # Use only the batch number as the overlay text
+                    overlay_text = str(num)
+                else:
+                    # Append the batch number to the existing overlay text
+                    overlay_text = f"{self.overlay_text} {num}"
+            else:
+                # Single image save; use the overlay text as is
+                overlay_text = self.overlay_text if self.overlay_text else ""
+
             rendered_pixmap = self.render_image(self.output_width, self.output_height, overlay_text)
 
             image = rendered_pixmap.toImage()
