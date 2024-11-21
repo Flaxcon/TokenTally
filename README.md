@@ -1,1623 +1,216 @@
-# TokenTally - Advanced Image Numbering and Customization Tool 
-![TokenTally Logo](https://github.com/Flaxcon/TokenTally/raw/main/logo.png) 
+TokenTally
 
-TokenTally is a powerful and user-friendly PyQt5-based application designed to simplify image editing and batch processing tasks. Whether you're a photographer, graphic designer, or digital artist, TokenTally offers a comprehensive set of tools to customize and manage your images with ease.
+TokenTally is a user-friendly application designed to help you create and number your game tokens effortlessly. Whether you're a Dungeon Master preparing for a Dungeons & Dragons campaign or a player customizing tokens for any tabletop game, TokenTally streamlines the process of adding overlays and numbering your tokens.
+Features
 
-## Table of Contents 
- 
-- [Features](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#features)
- 
-- [Installation](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#installation)  
-  - [Prerequisites](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#prerequisites)
- 
-  - [Installation Steps](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#installation-steps)
- 
-- [Usage](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#usage)  
-  - [Launching the Application](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#launching-the-application)
- 
-  - [Importing Images](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#importing-images)
- 
-  - [Selecting Operational Mode](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#selecting-operational-mode)
- 
-  - [Customizing Overlays](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#customizing-overlays)
- 
-  - [Gradient Circle Customization](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#gradient-circle-customization)
- 
-  - [Output Settings](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#output-settings)
- 
-  - [Saving Images](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#saving-images)
- 
-- [Troubleshooting](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#troubleshooting)
- 
-- [Contributing](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#contributing)
- 
-- [License](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#license)
- 
-- [Acknowledgements](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#acknowledgements)
+    Drag and Drop Interface: Easily import images by dragging and dropping them into the application.
+    Supported Formats: Accepts .webp, .png, .jpg, and .jpeg image files.
+    Customizable Overlays: Add numbers or short text overlays to your tokens.
+    Font Customization: Adjust the font size and color of the overlay text.
+    Overlay Positioning: Reposition the overlay using intuitive arrow buttons.
+    Batch Processing: Generate sequences of numbered tokens with ease.
+    Output Settings: Customize output dimensions and DPI settings.
+    Save Options: Choose the save directory or save to the original image directory.
 
+Table of Contents
 
----
+    Prerequisites
+    Installation
+    Running TokenTally
+    Using TokenTally
+        1. Importing an Image
+            Via File Dialog
+            Via Drag and Drop
+        2. Customizing the Overlay
+            Entering Overlay Text
+            Adjusting Font Size
+            Choosing Font Color
+        3. Repositioning the Overlay
+        4. Batch Processing
+        5. Configuring Output Settings
+            Output Dimensions
+            Output DPI
+        6. Selecting Save Directory
+        7. Saving the Image(s)
+    Troubleshooting
+    License
 
+Prerequisites
 
-## Features 
- 
-- **Flexible Image Importing:**  
-  - **File Selection:**  Easily select images using an intuitive file dialog supporting PNG, JPG, and WEBP formats.
- 
-  - **Drag-and-Drop:**  Quickly drag images directly into the application for seamless access.
- 
-  - **Clipboard Support:**  Paste images directly from your clipboard for a streamlined workflow.
- 
-- **Dual Operational Modes:**  
-  - **Cropping Mode:**  Precisely frame and crop images with interactive panning and zooming tools.
- 
-  - **Conversion Mode:**  Perform general image processing with customizable output settings.
- 
-- **Interactive Image Manipulation:**  
-  - **Panning & Zooming:**  Navigate images effortlessly to focus on specific areas for detailed editing.
- 
-  - **Real-Time Preview:**  Instantly view changes to ensure edits meet your expectations before saving.
- 
-- **Customizable Overlays:**  
-  - **Text Overlay:**  Add personalized text with options to adjust font size, color, and position.
- 
-  - **Gradient Circle Customization:**  Select and customize start and end colors for gradient circles to enhance image aesthetics.
- 
-- **Comprehensive Output Settings:**  
-  - **Dimensions & DPI:**  Define output width, height, and DPI to match specific requirements.
- 
-  - **Batch Numbering:**  Automate the numbering process with customizable batch start and end options. 
-    - **Conditional Numbering:** 
-      - If the overlay text is exactly "1" and batch processing is active, images will display only the batch numbers (1-5).
+    Python 3.x: Ensure you have Python 3 installed. You can download it from the official website.
 
-      - If the overlay text is anything else, the batch number will be appended to the overlay text (e.g., "Token 1", "Token 2").
- 
-  - **Save Directory Selection:**  Choose your preferred save location with ease.
- 
-- **High-Quality Saving:**  
-  - **PNG Format:**  Save customized images as high-quality PNG files, preserving transparency and color fidelity.
- 
-  - **Batch Processing:**  Efficiently process and save multiple images simultaneously, saving valuable time.
- 
-- **User-Friendly Interface:**  
-  - **Intuitive Design:**  Navigate features effortlessly with a clean and organized layout.
- 
-  - **Responsive Controls:**  Enjoy smooth interactions and immediate feedback during customization.
- 
-- **Additional Features:**  
-  - **Temporary File Management:**  Automatically handles temporary files to keep your workspace clean.
- 
-  - **Error Handling:**  Provides informative messages and warnings to guide users through any issues.
+    PyQt5: TokenTally uses the PyQt5 library for its graphical user interface.
 
+    Install PyQt5 using pip:
 
----
+    pip install PyQt5
 
+Installation
 
-## Installation 
+    Clone or Download the Repository
 
-### Prerequisites 
+    Clone the repository using git:
 
-Before installing TokenTally, ensure that your system meets the following requirements:
- 
-- **Operating System:**  Windows, macOS, or Linux
- 
-- **Python:**  Version 3.7 or higher
- 
-- **Python Package Manager:**  `pip`
-
-### Installation Steps 
- 
-1. **Clone the Repository** 
-Begin by cloning the TokenTally repository to your local machine using Git:
-
-
-```bash
 git clone https://github.com/Flaxcon/TokenTally.git
-```
 
-Alternatively, you can download the repository as a ZIP file and extract it.
- 
-2. **Navigate to the Project Directory** 
+Or download the ZIP file and extract it to your preferred location.
 
-```bash
+Navigate to the Directory
+
 cd TokenTally
-```
- 
-3. **Create a Virtual Environment (Optional but Recommended)** 
-It's good practice to use a virtual environment to manage dependencies.
 
-
-```bash
-python3 -m venv venv
-```
+Install Required Dependencies
 
-Activate the virtual environment:
- 
-  - **Windows:** 
-
-```bash
-venv\Scripts\activate
-```
- 
-  - **macOS/Linux:** 
-
-```bash
-source venv/bin/activate
-```
- 
-4. **Install Dependencies** Install the required Python packages using `pip`:
-
-```bash
-pip install -r requirements.txt
-```
-**Note:**  If a `requirements.txt` file is not provided, you can install the necessary packages manually:
-
-```bash
-pip install PyQt5
-```
- 
-5. **Run the Application** 
-Launch TokenTally by running the main script:
-
-
-```bash
-python token_tally.py
-```
-Replace `token_tally.py` with the actual name of your main Python file if different.
-
-
----
-
-
-## Usage 
-
-Once installed, follow these steps to use TokenTally effectively.
-
-### Launching the Application 
-
-After installation, launch the application using the following command:
-
-
-```bash
-python token_tally.py
-```
-
-Upon successful launch, the TokenTally interface will appear, ready for image processing tasks.
-
-### Importing Images 
-
-TokenTally offers multiple methods to import images:
- 
-1. **File Selection:**  
-  - Click the **"Select Image File"**  button.
- 
-  - Browse and select an image file (supports `.png`, `.jpg`, `.jpeg`, `.webp`).
- 
-2. **Drag-and-Drop:** 
-  - Drag an image file from your file explorer and drop it onto the designated area in the application.
- 
-3. **Clipboard Support:** 
-  - Copy an image to your clipboard.
- 
-  - Right-click within the application and select **"Paste Image"**  from the context menu.
-
-### Selecting Operational Mode 
-
-TokenTally operates in two distinct modes:
- 
-1. **Cropping Mode:**  
-  - **Purpose:**  Precisely crop images into circular shapes with adjustable panning and zooming.
- 
-  - **Features:** 
-    - Interactive panning by clicking and dragging the image.
-
-    - Zoom in and out using the mouse wheel for detailed cropping.
-
-    - Gradient circle around the cropped image with customizable colors.
- 
-2. **Conversion Mode:**  
-  - **Purpose:**  General image processing without the cropping feature.
- 
-  - **Features:** 
-    - Customize output dimensions, DPI, and batch numbering.
-
-    - Apply text overlays without cropping.
-**Switching Modes:**  
-  - Navigate to the **"Mode Selection"**  section.
- 
-  - Choose between **"Cropping Mode"**  and **"Conversion Mode"**  by selecting the corresponding radio button.
-
-### Customizing Overlays 
-
-Enhance your images by adding customizable text overlays:
- 
-1. **Adding Text:**  
-  - Locate the **"Overlay Settings"**  section.
- 
-  - Enter your desired text in the **"Overlay Text"**  field (maximum 10 characters).
- 
-2. **Adjusting Font Size:**  
-  - Use the **"Font Size"**  spin box to set the desired size of the overlay text.
- 
-3. **Choosing Font Color:**  
-  - Click the **"Choose Font Color"**  button.
-
-  - Select your preferred color from the color picker dialog.
- 
-4. **Positioning Text:**  
-  - Use the arrow buttons (**←** , **→** , **↑** , **↓** ) to move the text overlay to the desired position on the image.
-**Conditional Numbering:**  
-  - **If `Overlay Text` is exactly "1":** 
-    - During batch processing, only the batch numbers (1-5) will appear on the images.
- 
-  - **If `Overlay Text` is anything else:** 
-    - Batch numbers will be appended to the overlay text (e.g., "Token 1", "Token 2").
-
-### Gradient Circle Customization 
-
-Add a personalized gradient circle around your images:
- 
-1. **Selecting Gradient Start Color:**  
-  - Navigate to the **"Gradient Settings"**  section.
- 
-  - Click the **"Choose Gradient Start Color"**  button.
-
-  - Select your desired start color from the color picker.
- 
-2. **Selecting Gradient End Color:**  
-  - Click the **"Choose Gradient End Color"**  button.
-
-  - Select your desired end color from the color picker.
-**Real-Time Preview:** 
-  - The gradient circle around the image will update in real-time to reflect your color selections.
-
-### Output Settings 
-
-Configure how your images will be saved:
- 
-1. **Dimensions & DPI:**  
-  - **Output Width (px):**  Set the desired width of the saved image in pixels.
- 
-  - **Output Height (px):**  Set the desired height of the saved image in pixels.
- 
-  - **Output DPI:**  Define the resolution (dots per inch) for the saved image.
-**Note:**  In **Cropping Mode** , the dimensions are fixed to 200x200 pixels and DPI settings are disabled.
- 
-2. **Batch Numbering:**  
-  - **Batch Start Number:**  Specify the starting number for batch processing.
- 
-  - **Batch End Number:**  Specify the ending number for batch processing.
-**Numbering Behavior:**  
-  - **Overlay Text is "1":**  Images will display only the batch numbers (e.g., "1", "2", "3").
- 
-  - **Overlay Text is anything else:**  Batch numbers will be appended to the overlay text (e.g., "Token 1", "Token 2").
- 
-3. **Save Directory Selection:**  
-  - Click the **"Select Save Directory"**  button.
-
-  - Choose the folder where you want the processed images to be saved.
-
-### Saving Images 
-
-Once all settings are configured, proceed to save your images:
- 
-1. **Single Image Save:**  
-  - Ensure that **Batch Start Number**  and **Batch End Number**  are set to the same value.
- 
-  - Click the **"Save as PNG"**  button.
-
-  - The image will be saved with the specified overlay text.
- 
-2. **Batch Image Save:**  
-  - Set different values for **Batch Start Number**  and **Batch End Number**  (e.g., Start: 1, End: 5).
- 
-  - Click the **"Save as PNG"**  button.
- 
-  - **If Overlay Text is "1":**  Images will be saved with overlay texts "1" to "5".
- 
-  - **If Overlay Text is "Token":**  Images will be saved with overlay texts "Token 1" to "Token 5".
- 
-3. **Completion Notification:** 
-  - After saving, a confirmation dialog will appear, indicating the range of saved images and their save location.
-
-
----
-
-
-## Troubleshooting 
-
-Encountering issues? Here are some common problems and their solutions:
- 
-- **All Batch Images Display the Same Number:**  
-  - **Cause:**  The overlay text is set to "1", which triggers the numbering logic to use only batch numbers.
- 
-  - **Solution:**  Ensure that the overlay text is set appropriately based on your desired numbering behavior.
- 
-- **Application Fails to Save Images:**  
-  - **Cause:**  Possible write permissions in the selected save directory or invalid file paths.
- 
-  - **Solution:**  Verify that you have write permissions to the chosen directory and that the path is valid.
- 
-- **Images Not Displaying Properly:**  
-  - **Cause:**  Unsupported image formats or corrupted files.
- 
-  - **Solution:**  Use supported formats (`.png`, `.jpg`, `.jpeg`, `.webp`) and ensure that the images are not corrupted.
- 
-- **Application Crashes or Freezes:**  
-  - **Cause:**  Insufficient system resources or bugs in the application.
- 
-  - **Solution:**  Ensure your system meets the prerequisites and consider updating Python and PyQt5 to the latest versions.
- 
-- **Gradient Colors Not Applying:**  
-  - **Cause:**  Issues with color selection or rendering.
- 
-  - **Solution:**  Re-select gradient colors using the provided buttons and ensure that color values are valid.
-
-
----
-
-
-## Contributing 
-
-We welcome contributions from the community! If you'd like to contribute to TokenTally, please follow these guidelines:
- 
-1. **Fork the Repository** Click the **"Fork"**  button at the top-right corner of the repository page to create a copy in your GitHub account.
- 
-2. **Clone Your Fork** 
-
-```bash
-git clone https://github.com/your-username/TokenTally.git
-cd TokenTally
-```
- 
-3. **Create a New Branch** 
-
-```bash
-git checkout -b feature/YourFeatureName
-```
- 
-4. **Make Your Changes** 
-Implement your feature or bug fix.
- 
-5. **Commit Your Changes** 
-
-```bash
-git add .
-git commit -m "Description of your changes"
-```
- 
-6. **Push to Your Fork** 
-
-```bash
-git push origin feature/YourFeatureName
-```
- 
-7. **Create a Pull Request** Navigate to your fork on GitHub and click the **"Compare & pull request"**  button. Provide a clear description of your changes and submit the pull request.
-**Please ensure that your contributions adhere to the project's coding standards and include appropriate documentation and tests.** 
-
----
-
-
-## License 
-Distributed under the [MIT License]() .
-
----
-
-
-## Acknowledgements 
- 
-- [PyQt5]()  - Python bindings for the Qt application framework.
- 
-- [Python](https://www.python.org/)  - The programming language used for development.
- 
-- [GitHub](https://github.com/)  - Hosting platform for version control and collaboration.
-
-
----
-
-**Thought for 7 seconds
-# TokenTally - Advanced Image Numbering and Customization Tool 
-![TokenTally Logo](https://github.com/Flaxcon/TokenTally/raw/main/logo.png) 
-
-TokenTally is a powerful and user-friendly PyQt5-based application designed to simplify image editing and batch processing tasks. Whether you're a photographer, graphic designer, or digital artist, TokenTally offers a comprehensive set of tools to customize and manage your images with ease.
-
-## Table of Contents 
- 
-- [Features](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#features)
- 
-- [Installation](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#installation)  
-  - [Prerequisites](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#prerequisites)
- 
-  - [Installation Steps](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#installation-steps)
- 
-- [Usage](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#usage)  
-  - [Launching the Application](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#launching-the-application)
- 
-  - [Importing Images](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#importing-images)
- 
-  - [Selecting Operational Mode](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#selecting-operational-mode)
- 
-  - [Customizing Overlays](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#customizing-overlays)
- 
-  - [Gradient Circle Customization](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#gradient-circle-customization)
- 
-  - [Output Settings](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#output-settings)
- 
-  - [Saving Images](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#saving-images)
- 
-- [Troubleshooting](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#troubleshooting)
- 
-- [Contributing](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#contributing)
- 
-- [License](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#license)
- 
-- [Acknowledgements](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#acknowledgements)
-
-
----
-
-
-## Features 
- 
-- **Flexible Image Importing:**  
-  - **File Selection:**  Easily select images using an intuitive file dialog supporting PNG, JPG, and WEBP formats.
- 
-  - **Drag-and-Drop:**  Quickly drag images directly into the application for seamless access.
- 
-  - **Clipboard Support:**  Paste images directly from your clipboard for a streamlined workflow.
- 
-- **Dual Operational Modes:**  
-  - **Cropping Mode:**  Precisely frame and crop images with interactive panning and zooming tools.
- 
-  - **Conversion Mode:**  Perform general image processing with customizable output settings.
- 
-- **Interactive Image Manipulation:**  
-  - **Panning & Zooming:**  Navigate images effortlessly to focus on specific areas for detailed editing.
- 
-  - **Real-Time Preview:**  Instantly view changes to ensure edits meet your expectations before saving.
- 
-- **Customizable Overlays:**  
-  - **Text Overlay:**  Add personalized text with options to adjust font size, color, and position.
- 
-  - **Gradient Circle Customization:**  Select and customize start and end colors for gradient circles to enhance image aesthetics.
- 
-- **Comprehensive Output Settings:**  
-  - **Dimensions & DPI:**  Define output width, height, and DPI to match specific requirements.
- 
-  - **Batch Numbering:**  Automate the numbering process with customizable batch start and end options. 
-    - **Conditional Numbering:** 
-      - If the overlay text is exactly "1" and batch processing is active, images will display only the batch numbers (1-5).
-
-      - If the overlay text is anything else, the batch number will be appended to the overlay text (e.g., "Token 1", "Token 2").
- 
-  - **Save Directory Selection:**  Choose your preferred save location with ease.
- 
-- **High-Quality Saving:**  
-  - **PNG Format:**  Save customized images as high-quality PNG files, preserving transparency and color fidelity.
- 
-  - **Batch Processing:**  Efficiently process and save multiple images simultaneously, saving valuable time.
- 
-- **User-Friendly Interface:**  
-  - **Intuitive Design:**  Navigate features effortlessly with a clean and organized layout.
- 
-  - **Responsive Controls:**  Enjoy smooth interactions and immediate feedback during customization.
- 
-- **Additional Features:**  
-  - **Temporary File Management:**  Automatically handles temporary files to keep your workspace clean.
- 
-  - **Error Handling:**  Provides informative messages and warnings to guide users through any issues.
-
-
----
-
-
-## Installation 
-
-### Prerequisites 
-
-Before installing TokenTally, ensure that your system meets the following requirements:
- 
-- **Operating System:**  Windows, macOS, or Linux
- 
-- **Python:**  Version 3.7 or higher
- 
-- **Python Package Manager:**  `pip`
-
-### Installation Steps 
- 
-1. **Clone the Repository** 
-Begin by cloning the TokenTally repository to your local machine using Git:
-
-
-```bash
-git clone https://github.com/Flaxcon/TokenTally.git
-```
-
-Alternatively, you can download the repository as a ZIP file and extract it.
- 
-2. **Navigate to the Project Directory** 
-
-```bash
-cd TokenTally
-```
- 
-3. **Create a Virtual Environment (Optional but Recommended)** 
-It's good practice to use a virtual environment to manage dependencies.
-
-
-```bash
-python3 -m venv venv
-```
-
-Activate the virtual environment:
- 
-  - **Windows:** 
-
-```bash
-venv\Scripts\activate
-```
- 
-  - **macOS/Linux:** 
-
-```bash
-source venv/bin/activate
-```
- 
-4. **Install Dependencies** Install the required Python packages using `pip`:
-
-```bash
-pip install -r requirements.txt
-```
-**Note:**  If a `requirements.txt` file is not provided, you can install the necessary packages manually:
-
-```bash
-pip install PyQt5
-```
- 
-5. **Run the Application** 
-Launch TokenTally by running the main script:
-
-
-```bash
-python token_tally.py
-```
-Replace `token_tally.py` with the actual name of your main Python file if different.
-
-
----
-
-
-## Usage 
-
-Once installed, follow these steps to use TokenTally effectively.
-
-### Launching the Application 
-
-After installation, launch the application using the following command:
-
-
-```bash
-python token_tally.py
-```
-
-Upon successful launch, the TokenTally interface will appear, ready for image processing tasks.
-
-### Importing Images 
-
-TokenTally offers multiple methods to import images:
- 
-1. **File Selection:**  
-  - Click the **"Select Image File"**  button.
- 
-  - Browse and select an image file (supports `.png`, `.jpg`, `.jpeg`, `.webp`).
- 
-2. **Drag-and-Drop:** 
-  - Drag an image file from your file explorer and drop it onto the designated area in the application.
- 
-3. **Clipboard Support:** 
-  - Copy an image to your clipboard.
- 
-  - Right-click within the application and select **"Paste Image"**  from the context menu.
-
-### Selecting Operational Mode 
-
-TokenTally operates in two distinct modes:
- 
-1. **Cropping Mode:**  
-  - **Purpose:**  Precisely crop images into circular shapes with adjustable panning and zooming.
- 
-  - **Features:** 
-    - Interactive panning by clicking and dragging the image.
-
-    - Zoom in and out using the mouse wheel for detailed cropping.
-
-    - Gradient circle around the cropped image with customizable colors.
- 
-2. **Conversion Mode:**  
-  - **Purpose:**  General image processing without the cropping feature.
- 
-  - **Features:** 
-    - Customize output dimensions, DPI, and batch numbering.
-
-    - Apply text overlays without cropping.
-**Switching Modes:**  
-  - Navigate to the **"Mode Selection"**  section.
- 
-  - Choose between **"Cropping Mode"**  and **"Conversion Mode"**  by selecting the corresponding radio button.
-
-### Customizing Overlays 
-
-Enhance your images by adding customizable text overlays:
- 
-1. **Adding Text:**  
-  - Locate the **"Overlay Settings"**  section.
- 
-  - Enter your desired text in the **"Overlay Text"**  field (maximum 10 characters).
- 
-2. **Adjusting Font Size:**  
-  - Use the **"Font Size"**  spin box to set the desired size of the overlay text.
- 
-3. **Choosing Font Color:**  
-  - Click the **"Choose Font Color"**  button.
-
-  - Select your preferred color from the color picker dialog.
- 
-4. **Positioning Text:**  
-  - Use the arrow buttons (**←** , **→** , **↑** , **↓** ) to move the text overlay to the desired position on the image.
-**Conditional Numbering:**  
-  - **If `Overlay Text` is exactly "1":** 
-    - During batch processing, only the batch numbers (1-5) will appear on the images.
- 
-  - **If `Overlay Text` is anything else:** 
-    - Batch numbers will be appended to the overlay text (e.g., "Token 1", "Token 2").
-
-### Gradient Circle Customization 
-
-Add a personalized gradient circle around your images:
- 
-1. **Selecting Gradient Start Color:**  
-  - Navigate to the **"Gradient Settings"**  section.
- 
-  - Click the **"Choose Gradient Start Color"**  button.
-
-  - Select your desired start color from the color picker.
- 
-2. **Selecting Gradient End Color:**  
-  - Click the **"Choose Gradient End Color"**  button.
-
-  - Select your desired end color from the color picker.
-**Real-Time Preview:** 
-  - The gradient circle around the image will update in real-time to reflect your color selections.
-
-### Output Settings 
-
-Configure how your images will be saved:
- 
-1. **Dimensions & DPI:**  
-  - **Output Width (px):**  Set the desired width of the saved image in pixels.
- 
-  - **Output Height (px):**  Set the desired height of the saved image in pixels.
- 
-  - **Output DPI:**  Define the resolution (dots per inch) for the saved image.
-**Note:**  In **Cropping Mode** , the dimensions are fixed to 200x200 pixels and DPI settings are disabled.
- 
-2. **Batch Numbering:**  
-  - **Batch Start Number:**  Specify the starting number for batch processing.
- 
-  - **Batch End Number:**  Specify the ending number for batch processing.
-**Numbering Behavior:**  
-  - **Overlay Text is "1":**  Images will display only the batch numbers (e.g., "1", "2", "3").
- 
-  - **Overlay Text is anything else:**  Batch numbers will be appended to the overlay text (e.g., "Token 1", "Token 2").
- 
-3. **Save Directory Selection:**  
-  - Click the **"Select Save Directory"**  button.
-
-  - Choose the folder where you want the processed images to be saved.
-
-### Saving Images 
-
-Once all settings are configured, proceed to save your images:
- 
-1. **Single Image Save:**  
-  - Ensure that **Batch Start Number**  and **Batch End Number**  are set to the same value.
- 
-  - Click the **"Save as PNG"**  button.
-
-  - The image will be saved with the specified overlay text.
- 
-2. **Batch Image Save:**  
-  - Set different values for **Batch Start Number**  and **Batch End Number**  (e.g., Start: 1, End: 5).
- 
-  - Click the **"Save as PNG"**  button.
- 
-  - **If Overlay Text is "1":**  Images will be saved with overlay texts "1" to "5".
- 
-  - **If Overlay Text is "Token":**  Images will be saved with overlay texts "Token 1" to "Token 5".
- 
-3. **Completion Notification:** 
-  - After saving, a confirmation dialog will appear, indicating the range of saved images and their save location.
-
-
----
-
-
-## Troubleshooting 
-
-Encountering issues? Here are some common problems and their solutions:
- 
-- **All Batch Images Display the Same Number:**  
-  - **Cause:**  The overlay text is set to "1", which triggers the numbering logic to use only batch numbers.
- 
-  - **Solution:**  Ensure that the overlay text is set appropriately based on your desired numbering behavior.
- 
-- **Application Fails to Save Images:**  
-  - **Cause:**  Possible write permissions in the selected save directory or invalid file paths.
- 
-  - **Solution:**  Verify that you have write permissions to the chosen directory and that the path is valid.
- 
-- **Images Not Displaying Properly:**  
-  - **Cause:**  Unsupported image formats or corrupted files.
- 
-  - **Solution:**  Use supported formats (`.png`, `.jpg`, `.jpeg`, `.webp`) and ensure that the images are not corrupted.
- 
-- **Application Crashes or Freezes:**  
-  - **Cause:**  Insufficient system resources or bugs in the application.
- 
-  - **Solution:**  Ensure your system meets the prerequisites and consider updating Python and PyQt5 to the latest versions.
- 
-- **Gradient Colors Not Applying:**  
-  - **Cause:**  Issues with color selection or rendering.
- 
-  - **Solution:**  Re-select gradient colors using the provided buttons and ensure that color values are valid.
-
-
----
-
-
-## Contributing 
-
-We welcome contributions from the community! If you'd like to contribute to TokenTally, please follow these guidelines:
- 
-1. **Fork the Repository** Click the **"Fork"**  button at the top-right corner of the repository page to create a copy in your GitHub account.
- 
-2. **Clone Your Fork** 
-
-```bash
-git clone https://github.com/your-username/TokenTally.git
-cd TokenTally
-```
- 
-3. **Create a New Branch** 
-
-```bash
-git checkout -b feature/YourFeatureName
-```
- 
-4. **Make Your Changes** 
-Implement your feature or bug fix.
- 
-5. **Commit Your Changes** 
-
-```bash
-git add .
-git commit -m "Description of your changes"
-```
- 
-6. **Push to Your Fork** 
-
-```bash
-git push origin feature/YourFeatureName
-```
- 
-7. **Create a Pull Request** Navigate to your fork on GitHub and click the **"Compare & pull request"**  button. Provide a clear description of your changes and submit the pull request.
-**Please ensure that your contributions adhere to the project's coding standards and include appropriate documentation and tests.** 
-
----
-
-
-## License 
-Distributed under the [MIT License]() .
-
----
-
-
-## Acknowledgements 
- 
-- [PyQt5]()  - Python bindings for the Qt application framework.
- 
-- [Python](https://www.python.org/)  - The programming language used for development.
- 
-- [GitHub](https://github.com/)  - Hosting platform for version control and collaboration.
-
-
----
-
-Enjoy using TokenTally! For any questions or support, please open an issue in the [GitHub repository](https://github.com/Flaxcon/TokenTally/issues) .**
-
-You: 
-
-please provide the above response in markdown
-
-ChatGPT: 
-
-Thought for 4 seconds
-Sure, here's the previous response in markdown format:
-
-# TokenTally - Advanced Image Numbering and Customization Tool 
-![TokenTally Logo](https://github.com/Flaxcon/TokenTally/raw/main/logo.png) 
-
-TokenTally is a powerful and user-friendly PyQt5-based application designed to simplify image editing and batch processing tasks. Whether you're a photographer, graphic designer, or digital artist, TokenTally offers a comprehensive set of tools to customize and manage your images with ease.
-
-## Table of Contents 
- 
-- [Features](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#features)
- 
-- [Installation](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#installation)  
-  - [Prerequisites](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#prerequisites)
- 
-  - [Installation Steps](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#installation-steps)
- 
-- [Usage](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#usage)  
-  - [Launching the Application](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#launching-the-application)
- 
-  - [Importing Images](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#importing-images)
- 
-  - [Selecting Operational Mode](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#selecting-operational-mode)
- 
-  - [Customizing Overlays](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#customizing-overlays)
- 
-  - [Gradient Circle Customization](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#gradient-circle-customization)
- 
-  - [Output Settings](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#output-settings)
- 
-  - [Saving Images](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#saving-images)
- 
-- [Troubleshooting](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#troubleshooting)
- 
-- [Contributing](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#contributing)
- 
-- [License](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#license)
- 
-- [Acknowledgements](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#acknowledgements)
-
-
----
-
-
-## Features 
- 
-- **Flexible Image Importing:**  
-  - **File Selection:**  Easily select images using an intuitive file dialog supporting PNG, JPG, and WEBP formats.
- 
-  - **Drag-and-Drop:**  Quickly drag images directly into the application for seamless access.
- 
-  - **Clipboard Support:**  Paste images directly from your clipboard for a streamlined workflow.
- 
-- **Dual Operational Modes:**  
-  - **Cropping Mode:**  Precisely frame and crop images with interactive panning and zooming tools.
- 
-  - **Conversion Mode:**  Perform general image processing with customizable output settings.
- 
-- **Interactive Image Manipulation:**  
-  - **Panning & Zooming:**  Navigate images effortlessly to focus on specific areas for detailed editing.
- 
-  - **Real-Time Preview:**  Instantly view changes to ensure edits meet your expectations before saving.
- 
-- **Customizable Overlays:**  
-  - **Text Overlay:**  Add personalized text with options to adjust font size, color, and position.
- 
-  - **Gradient Circle Customization:**  Select and customize start and end colors for gradient circles to enhance image aesthetics.
- 
-- **Comprehensive Output Settings:**  
-  - **Dimensions & DPI:**  Define output width, height, and DPI to match specific requirements.
- 
-  - **Batch Numbering:**  Automate the numbering process with customizable batch start and end options. 
-    - **Conditional Numbering:** 
-      - If the overlay text is exactly "1" and batch processing is active, images will display only the batch numbers (1-5).
-
-      - If the overlay text is anything else, the batch number will be appended to the overlay text (e.g., "Token 1", "Token 2").
- 
-  - **Save Directory Selection:**  Choose your preferred save location with ease.
- 
-- **High-Quality Saving:**  
-  - **PNG Format:**  Save customized images as high-quality PNG files, preserving transparency and color fidelity.
- 
-  - **Batch Processing:**  Efficiently process and save multiple images simultaneously, saving valuable time.
- 
-- **User-Friendly Interface:**  
-  - **Intuitive Design:**  Navigate features effortlessly with a clean and organized layout.
- 
-  - **Responsive Controls:**  Enjoy smooth interactions and immediate feedback during customization.
- 
-- **Additional Features:**  
-  - **Temporary File Management:**  Automatically handles temporary files to keep your workspace clean.
- 
-  - **Error Handling:**  Provides informative messages and warnings to guide users through any issues.
-
-
----
-
-
-## Installation 
-
-### Prerequisites 
-
-Before installing TokenTally, ensure that your system meets the following requirements:
- 
-- **Operating System:**  Windows, macOS, or Linux
- 
-- **Python:**  Version 3.7 or higher
- 
-- **Python Package Manager:**  `pip`
-
-### Installation Steps 
- 
-1. **Clone the Repository** 
-Begin by cloning the TokenTally repository to your local machine using Git:
-
-
-```bash
-git clone https://github.com/Flaxcon/TokenTally.git
-```
-
-Alternatively, you can download the repository as a ZIP file and extract it.
- 
-2. **Navigate to the Project Directory** 
-
-```bash
-cd TokenTally
-```
- 
-3. **Create a Virtual Environment (Optional but Recommended)** 
-It's good practice to use a virtual environment to manage dependencies.
-
-
-```bash
-python3 -m venv venv
-```
-
-Activate the virtual environment:
- 
-  - **Windows:** 
-
-```bash
-venv\Scripts\activate
-```
- 
-  - **macOS/Linux:** 
-
-```bash
-source venv/bin/activate
-```
- 
-4. **Install Dependencies** Install the required Python packages using `pip`:
-
-```bash
-pip install -r requirements.txt
-```
-**Note:**  If a `requirements.txt` file is not provided, you can install the necessary packages manually:
-
-```bash
-pip install PyQt5
-```
- 
-5. **Run the Application** 
-Launch TokenTally by running the main script:
-
-
-```bash
-python token_tally.py
-```
-Replace `token_tally.py` with the actual name of your main Python file if different.
-
-
----
-
-
-## Usage 
-
-Once installed, follow these steps to use TokenTally effectively.
-
-### Launching the Application 
-
-After installation, launch the application using the following command:
-
-
-```bash
-python token_tally.py
-```
-
-Upon successful launch, the TokenTally interface will appear, ready for image processing tasks.
-
-### Importing Images 
-
-TokenTally offers multiple methods to import images:
- 
-1. **File Selection:**  
-  - Click the **"Select Image File"**  button.
- 
-  - Browse and select an image file (supports `.png`, `.jpg`, `.jpeg`, `.webp`).
- 
-2. **Drag-and-Drop:** 
-  - Drag an image file from your file explorer and drop it onto the designated area in the application.
- 
-3. **Clipboard Support:** 
-  - Copy an image to your clipboard.
- 
-  - Right-click within the application and select **"Paste Image"**  from the context menu.
-
-### Selecting Operational Mode 
-
-TokenTally operates in two distinct modes:
- 
-1. **Cropping Mode:**  
-  - **Purpose:**  Precisely crop images into circular shapes with adjustable panning and zooming.
- 
-  - **Features:** 
-    - Interactive panning by clicking and dragging the image.
-
-    - Zoom in and out using the mouse wheel for detailed cropping.
-
-    - Gradient circle around the cropped image with customizable colors.
- 
-2. **Conversion Mode:**  
-  - **Purpose:**  General image processing without the cropping feature.
- 
-  - **Features:** 
-    - Customize output dimensions, DPI, and batch numbering.
-
-    - Apply text overlays without cropping.
-**Switching Modes:**  
-  - Navigate to the **"Mode Selection"**  section.
- 
-  - Choose between **"Cropping Mode"**  and **"Conversion Mode"**  by selecting the corresponding radio button.
-
-### Customizing Overlays 
-
-Enhance your images by adding customizable text overlays:
- 
-1. **Adding Text:**  
-  - Locate the **"Overlay Settings"**  section.
- 
-  - Enter your desired text in the **"Overlay Text"**  field (maximum 10 characters).
- 
-2. **Adjusting Font Size:**  
-  - Use the **"Font Size"**  spin box to set the desired size of the overlay text.
- 
-3. **Choosing Font Color:**  
-  - Click the **"Choose Font Color"**  button.
-
-  - Select your preferred color from the color picker dialog.
- 
-4. **Positioning Text:**  
-  - Use the arrow buttons (**←** , **→** , **↑** , **↓** ) to move the text overlay to the desired position on the image.
-**Conditional Numbering:**  
-  - **If `Overlay Text` is exactly "1":** 
-    - During batch processing, only the batch numbers (1-5) will appear on the images.
- 
-  - **If `Overlay Text` is anything else:** 
-    - Batch numbers will be appended to the overlay text (e.g., "Token 1", "Token 2").
-
-### Gradient Circle Customization 
-
-Add a personalized gradient circle around your images:
- 
-1. **Selecting Gradient Start Color:**  
-  - Navigate to the **"Gradient Settings"**  section.
- 
-  - Click the **"Choose Gradient Start Color"**  button.
-
-  - Select your desired start color from the color picker.
- 
-2. **Selecting Gradient End Color:**  
-  - Click the **"Choose Gradient End Color"**  button.
-
-  - Select your desired end color from the color picker.
-**Real-Time Preview:** 
-  - The gradient circle around the image will update in real-time to reflect your color selections.
-
-### Output Settings 
-
-Configure how your images will be saved:
- 
-1. **Dimensions & DPI:**  
-  - **Output Width (px):**  Set the desired width of the saved image in pixels.
- 
-  - **Output Height (px):**  Set the desired height of the saved image in pixels.
- 
-  - **Output DPI:**  Define the resolution (dots per inch) for the saved image.
-**Note:**  In **Cropping Mode** , the dimensions are fixed to 200x200 pixels and DPI settings are disabled.
- 
-2. **Batch Numbering:**  
-  - **Batch Start Number:**  Specify the starting number for batch processing.
- 
-  - **Batch End Number:**  Specify the ending number for batch processing.
-**Numbering Behavior:**  
-  - **Overlay Text is "1":**  Images will display only the batch numbers (e.g., "1", "2", "3").
- 
-  - **Overlay Text is anything else:**  Batch numbers will be appended to the overlay text (e.g., "Token 1", "Token 2").
- 
-3. **Save Directory Selection:**  
-  - Click the **"Select Save Directory"**  button.
-
-  - Choose the folder where you want the processed images to be saved.
-
-### Saving Images 
-
-Once all settings are configured, proceed to save your images:
- 
-1. **Single Image Save:**  
-  - Ensure that **Batch Start Number**  and **Batch End Number**  are set to the same value.
- 
-  - Click the **"Save as PNG"**  button.
-
-  - The image will be saved with the specified overlay text.
- 
-2. **Batch Image Save:**  
-  - Set different values for **Batch Start Number**  and **Batch End Number**  (e.g., Start: 1, End: 5).
- 
-  - Click the **"Save as PNG"**  button.
- 
-  - **If Overlay Text is "1":**  Images will be saved with overlay texts "1" to "5".
- 
-  - **If Overlay Text is "Token":**  Images will be saved with overlay texts "Token 1" to "Token 5".
- 
-3. **Completion Notification:** 
-  - After saving, a confirmation dialog will appear, indicating the range of saved images and their save location.
-
-
----
-
-
-## Troubleshooting 
-
-Encountering issues? Here are some common problems and their solutions:
- 
-- **All Batch Images Display the Same Number:**  
-  - **Cause:**  The overlay text is set to "1", which triggers the numbering logic to use only batch numbers.
- 
-  - **Solution:**  Ensure that the overlay text is set appropriately based on your desired numbering behavior.
- 
-- **Application Fails to Save Images:**  
-  - **Cause:**  Possible write permissions in the selected save directory or invalid file paths.
- 
-  - **Solution:**  Verify that you have write permissions to the chosen directory and that the path is valid.
- 
-- **Images Not Displaying Properly:**  
-  - **Cause:**  Unsupported image formats or corrupted files.
- 
-  - **Solution:**  Use supported formats (`.png`, `.jpg`, `.jpeg`, `.webp`) and ensure that the images are not corrupted.
- 
-- **Application Crashes or Freezes:**  
-  - **Cause:**  Insufficient system resources or bugs in the application.
- 
-  - **Solution:**  Ensure your system meets the prerequisites and consider updating Python and PyQt5 to the latest versions.
- 
-- **Gradient Colors Not Applying:**  
-  - **Cause:**  Issues with color selection or rendering.
- 
-  - **Solution:**  Re-select gradient colors using the provided buttons and ensure that color values are valid.
-
-
----
-
-
-## Contributing 
-
-We welcome contributions from the community! If you'd like to contribute to TokenTally, please follow these guidelines:
- 
-1. **Fork the Repository** Click the **"Fork"**  button at the top-right corner of the repository page to create a copy in your GitHub account.
- 
-2. **Clone Your Fork** 
-
-```bash
-git clone https://github.com/your-username/TokenTally.git
-cd TokenTally
-```
- 
-3. **Create a New Branch** 
-
-```bash
-git checkout -b feature/YourFeatureName
-```
- 
-4. **Make Your Changes** 
-Implement your feature or bug fix.
- 
-5. **Commit Your Changes** 
-
-```bash
-git add .
-git commit -m "Description of your changes"
-```
- 
-6. **Push to Your Fork** 
-
-```bash
-git push origin feature/YourFeatureName
-```
- 
-7. **Create a Pull Request** Navigate to your fork on GitHub and click the **"Compare & pull request"**  button. Provide a clear description of your changes and submit the pull request.
-**Please ensure that your contributions adhere to the project's coding standards and include appropriate documentation and tests.** 
-
----
-
-
-## License 
-Distributed under the [MIT License]() .
-
----
-
-
-## Acknowledgements 
- 
-- [PyQt5]()  - Python bindings for the Qt application framework.
- 
-- [Python](https://www.python.org/)  - The programming language used for development.
- 
-- [GitHub](https://github.com/)  - Hosting platform for version control and collaboration.
-
-
----
-
-**Thought for 4 seconds
-Sure, here's the previous response in markdown format:
-
-# TokenTally - Advanced Image Numbering and Customization Tool 
-![TokenTally Logo](https://github.com/Flaxcon/TokenTally/raw/main/logo.png) 
-
-TokenTally is a powerful and user-friendly PyQt5-based application designed to simplify image editing and batch processing tasks. Whether you're a photographer, graphic designer, or digital artist, TokenTally offers a comprehensive set of tools to customize and manage your images with ease.
-
-## Table of Contents 
- 
-- [Features](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#features)
- 
-- [Installation](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#installation)  
-  - [Prerequisites](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#prerequisites)
- 
-  - [Installation Steps](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#installation-steps)
- 
-- [Usage](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#usage)  
-  - [Launching the Application](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#launching-the-application)
- 
-  - [Importing Images](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#importing-images)
- 
-  - [Selecting Operational Mode](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#selecting-operational-mode)
- 
-  - [Customizing Overlays](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#customizing-overlays)
- 
-  - [Gradient Circle Customization](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#gradient-circle-customization)
- 
-  - [Output Settings](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#output-settings)
- 
-  - [Saving Images](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#saving-images)
- 
-- [Troubleshooting](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#troubleshooting)
- 
-- [Contributing](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#contributing)
- 
-- [License](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#license)
- 
-- [Acknowledgements](https://chatgpt.com/c/673b8c6a-aca0-8002-8d8d-48ce27041a51?model=o1-preview#acknowledgements)
-
-
----
-
-
-## Features 
- 
-- **Flexible Image Importing:**  
-  - **File Selection:**  Easily select images using an intuitive file dialog supporting PNG, JPG, and WEBP formats.
- 
-  - **Drag-and-Drop:**  Quickly drag images directly into the application for seamless access.
- 
-  - **Clipboard Support:**  Paste images directly from your clipboard for a streamlined workflow.
- 
-- **Dual Operational Modes:**  
-  - **Cropping Mode:**  Precisely frame and crop images with interactive panning and zooming tools.
- 
-  - **Conversion Mode:**  Perform general image processing with customizable output settings.
- 
-- **Interactive Image Manipulation:**  
-  - **Panning & Zooming:**  Navigate images effortlessly to focus on specific areas for detailed editing.
- 
-  - **Real-Time Preview:**  Instantly view changes to ensure edits meet your expectations before saving.
- 
-- **Customizable Overlays:**  
-  - **Text Overlay:**  Add personalized text with options to adjust font size, color, and position.
- 
-  - **Gradient Circle Customization:**  Select and customize start and end colors for gradient circles to enhance image aesthetics.
- 
-- **Comprehensive Output Settings:**  
-  - **Dimensions & DPI:**  Define output width, height, and DPI to match specific requirements.
- 
-  - **Batch Numbering:**  Automate the numbering process with customizable batch start and end options. 
-    - **Conditional Numbering:** 
-      - If the overlay text is exactly "1" and batch processing is active, images will display only the batch numbers (1-5).
-
-      - If the overlay text is anything else, the batch number will be appended to the overlay text (e.g., "Token 1", "Token 2").
- 
-  - **Save Directory Selection:**  Choose your preferred save location with ease.
- 
-- **High-Quality Saving:**  
-  - **PNG Format:**  Save customized images as high-quality PNG files, preserving transparency and color fidelity.
- 
-  - **Batch Processing:**  Efficiently process and save multiple images simultaneously, saving valuable time.
- 
-- **User-Friendly Interface:**  
-  - **Intuitive Design:**  Navigate features effortlessly with a clean and organized layout.
- 
-  - **Responsive Controls:**  Enjoy smooth interactions and immediate feedback during customization.
- 
-- **Additional Features:**  
-  - **Temporary File Management:**  Automatically handles temporary files to keep your workspace clean.
- 
-  - **Error Handling:**  Provides informative messages and warnings to guide users through any issues.
-
-
----
-
-
-## Installation 
-
-### Prerequisites 
-
-Before installing TokenTally, ensure that your system meets the following requirements:
- 
-- **Operating System:**  Windows, macOS, or Linux
- 
-- **Python:**  Version 3.7 or higher
- 
-- **Python Package Manager:**  `pip`
-
-### Installation Steps 
- 
-1. **Clone the Repository** 
-Begin by cloning the TokenTally repository to your local machine using Git:
-
-
-```bash
-git clone https://github.com/Flaxcon/TokenTally.git
-```
-
-Alternatively, you can download the repository as a ZIP file and extract it.
- 
-2. **Navigate to the Project Directory** 
-
-```bash
-cd TokenTally
-```
- 
-3. **Create a Virtual Environment (Optional but Recommended)** 
-It's good practice to use a virtual environment to manage dependencies.
-
-
-```bash
-python3 -m venv venv
-```
-
-Activate the virtual environment:
- 
-  - **Windows:** 
-
-```bash
-venv\Scripts\activate
-```
- 
-  - **macOS/Linux:** 
-
-```bash
-source venv/bin/activate
-```
- 
-4. **Install Dependencies** Install the required Python packages using `pip`:
-
-```bash
-pip install -r requirements.txt
-```
-**Note:**  If a `requirements.txt` file is not provided, you can install the necessary packages manually:
-
-```bash
-pip install PyQt5
-```
- 
-5. **Run the Application** 
-Launch TokenTally by running the main script:
-
-
-```bash
-python token_tally.py
-```
-Replace `token_tally.py` with the actual name of your main Python file if different.
-
-
----
-
-
-## Usage 
-
-Once installed, follow these steps to use TokenTally effectively.
-
-### Launching the Application 
-
-After installation, launch the application using the following command:
-
-
-```bash
-python token_tally.py
-```
-
-Upon successful launch, the TokenTally interface will appear, ready for image processing tasks.
-
-### Importing Images 
-
-TokenTally offers multiple methods to import images:
- 
-1. **File Selection:**  
-  - Click the **"Select Image File"**  button.
- 
-  - Browse and select an image file (supports `.png`, `.jpg`, `.jpeg`, `.webp`).
- 
-2. **Drag-and-Drop:** 
-  - Drag an image file from your file explorer and drop it onto the designated area in the application.
- 
-3. **Clipboard Support:** 
-  - Copy an image to your clipboard.
- 
-  - Right-click within the application and select **"Paste Image"**  from the context menu.
-
-### Selecting Operational Mode 
-
-TokenTally operates in two distinct modes:
- 
-1. **Cropping Mode:**  
-  - **Purpose:**  Precisely crop images into circular shapes with adjustable panning and zooming.
- 
-  - **Features:** 
-    - Interactive panning by clicking and dragging the image.
-
-    - Zoom in and out using the mouse wheel for detailed cropping.
-
-    - Gradient circle around the cropped image with customizable colors.
- 
-2. **Conversion Mode:**  
-  - **Purpose:**  General image processing without the cropping feature.
- 
-  - **Features:** 
-    - Customize output dimensions, DPI, and batch numbering.
-
-    - Apply text overlays without cropping.
-**Switching Modes:**  
-  - Navigate to the **"Mode Selection"**  section.
- 
-  - Choose between **"Cropping Mode"**  and **"Conversion Mode"**  by selecting the corresponding radio button.
-
-### Customizing Overlays 
-
-Enhance your images by adding customizable text overlays:
- 
-1. **Adding Text:**  
-  - Locate the **"Overlay Settings"**  section.
- 
-  - Enter your desired text in the **"Overlay Text"**  field (maximum 10 characters).
- 
-2. **Adjusting Font Size:**  
-  - Use the **"Font Size"**  spin box to set the desired size of the overlay text.
- 
-3. **Choosing Font Color:**  
-  - Click the **"Choose Font Color"**  button.
-
-  - Select your preferred color from the color picker dialog.
- 
-4. **Positioning Text:**  
-  - Use the arrow buttons (**←** , **→** , **↑** , **↓** ) to move the text overlay to the desired position on the image.
-**Conditional Numbering:**  
-  - **If `Overlay Text` is exactly "1":** 
-    - During batch processing, only the batch numbers (1-5) will appear on the images.
- 
-  - **If `Overlay Text` is anything else:** 
-    - Batch numbers will be appended to the overlay text (e.g., "Token 1", "Token 2").
-
-### Gradient Circle Customization 
-
-Add a personalized gradient circle around your images:
- 
-1. **Selecting Gradient Start Color:**  
-  - Navigate to the **"Gradient Settings"**  section.
- 
-  - Click the **"Choose Gradient Start Color"**  button.
-
-  - Select your desired start color from the color picker.
- 
-2. **Selecting Gradient End Color:**  
-  - Click the **"Choose Gradient End Color"**  button.
-
-  - Select your desired end color from the color picker.
-**Real-Time Preview:** 
-  - The gradient circle around the image will update in real-time to reflect your color selections.
-
-### Output Settings 
-
-Configure how your images will be saved:
- 
-1. **Dimensions & DPI:**  
-  - **Output Width (px):**  Set the desired width of the saved image in pixels.
- 
-  - **Output Height (px):**  Set the desired height of the saved image in pixels.
- 
-  - **Output DPI:**  Define the resolution (dots per inch) for the saved image.
-**Note:**  In **Cropping Mode** , the dimensions are fixed to 200x200 pixels and DPI settings are disabled.
- 
-2. **Batch Numbering:**  
-  - **Batch Start Number:**  Specify the starting number for batch processing.
- 
-  - **Batch End Number:**  Specify the ending number for batch processing.
-**Numbering Behavior:**  
-  - **Overlay Text is "1":**  Images will display only the batch numbers (e.g., "1", "2", "3").
- 
-  - **Overlay Text is anything else:**  Batch numbers will be appended to the overlay text (e.g., "Token 1", "Token 2").
- 
-3. **Save Directory Selection:**  
-  - Click the **"Select Save Directory"**  button.
-
-  - Choose the folder where you want the processed images to be saved.
-
-### Saving Images 
-
-Once all settings are configured, proceed to save your images:
- 
-1. **Single Image Save:**  
-  - Ensure that **Batch Start Number**  and **Batch End Number**  are set to the same value.
- 
-  - Click the **"Save as PNG"**  button.
-
-  - The image will be saved with the specified overlay text.
- 
-2. **Batch Image Save:**  
-  - Set different values for **Batch Start Number**  and **Batch End Number**  (e.g., Start: 1, End: 5).
- 
-  - Click the **"Save as PNG"**  button.
- 
-  - **If Overlay Text is "1":**  Images will be saved with overlay texts "1" to "5".
- 
-  - **If Overlay Text is "Token":**  Images will be saved with overlay texts "Token 1" to "Token 5".
- 
-3. **Completion Notification:** 
-  - After saving, a confirmation dialog will appear, indicating the range of saved images and their save location.
-
-
----
-
-
-## Troubleshooting 
-
-Encountering issues? Here are some common problems and their solutions:
- 
-- **All Batch Images Display the Same Number:**  
-  - **Cause:**  The overlay text is set to "1", which triggers the numbering logic to use only batch numbers.
- 
-  - **Solution:**  Ensure that the overlay text is set appropriately based on your desired numbering behavior.
- 
-- **Application Fails to Save Images:**  
-  - **Cause:**  Possible write permissions in the selected save directory or invalid file paths.
- 
-  - **Solution:**  Verify that you have write permissions to the chosen directory and that the path is valid.
- 
-- **Images Not Displaying Properly:**  
-  - **Cause:**  Unsupported image formats or corrupted files.
- 
-  - **Solution:**  Use supported formats (`.png`, `.jpg`, `.jpeg`, `.webp`) and ensure that the images are not corrupted.
- 
-- **Application Crashes or Freezes:**  
-  - **Cause:**  Insufficient system resources or bugs in the application.
- 
-  - **Solution:**  Ensure your system meets the prerequisites and consider updating Python and PyQt5 to the latest versions.
- 
-- **Gradient Colors Not Applying:**  
-  - **Cause:**  Issues with color selection or rendering.
- 
-  - **Solution:**  Re-select gradient colors using the provided buttons and ensure that color values are valid.
-
-
----
+Ensure that PyQt5 is installed:
+
+    pip install PyQt5
+
+Running TokenTally
+
+Run the application using the following command:
+
+python tokentally.py
+
+Note: Replace tokentally.py with the actual filename if it's different.
+Using TokenTally
+1. Importing an Image
+
+You can import an image into TokenTally in two ways:
+Via File Dialog
+
+    Click the "Select Image File" button at the top of the application window.
+    In the file dialog that appears, navigate to the image file you wish to use.
+    Select the file and click "Open".
+        Supported image formats: .webp, .png, .jpg, .jpeg.
+
+Via Drag and Drop
+
+    Open the folder containing your image file.
+    Click and drag the image file over to the image preview area in TokenTally.
+        The area labeled "Image Preview Will Appear Here".
+    Release the mouse button to drop the image into the application.
+
+2. Customizing the Overlay
+
+Once your image is loaded, you can customize the overlay text that will appear on your token.
+Entering Overlay Text
+
+    In the "Overlay Settings" section, find the "Enter 1 or 2 Digits:" input field.
+    Type the number or text (up to 2 characters) you wish to overlay on the image.
+
+Adjusting Font Size
+
+    Use the "Font Size:" spin box to adjust the size of the overlay text.
+        Click the up or down arrows to increase or decrease the font size.
+        You can also type a value directly into the field.
+        Font size range: 10 to 100.
+
+Choosing Font Color
+
+    Click the "Choose Font Color" button.
+    A color dialog will appear.
+    Select your desired color and click "OK".
+    The button's background will change to the selected color.
+
+3. Repositioning the Overlay
+
+You can adjust the position of the overlay text using the arrow buttons in the "Reposition Overlay" section.
+
+    Up (↑): Moves the overlay up.
+    Down (↓): Moves the overlay down.
+    Left (←): Moves the overlay to the left.
+    Right (→): Moves the overlay to the right.
+
+Each click moves the overlay by 5 pixels. Adjust as needed to position the overlay precisely.
+4. Batch Processing
+
+TokenTally allows you to generate a sequence of numbered tokens automatically.
+
+    In the "Batch Overlay Settings" section:
+        Start Number: Set the starting number of your sequence.
+        End Number: Set the ending number of your sequence.
+
+    Example:
+        Start Number: 1
+        End Number: 5
+
+    This will generate tokens numbered from 1 to 5.
+
+Note: If you set both the start and end numbers to 1, only one image will be generated.
+5. Configuring Output Settings
+Output Dimensions
+
+    In the "Output Settings" section, you can specify the dimensions of the output image.
+        Output Width (px): Set the desired width in pixels.
+        Output Height (px): Set the desired height in pixels.
+
+    Adjust these values to meet the requirements of your virtual tabletop or printing needs.
+
+Output DPI
+
+    Output DPI: Set the dots per inch (DPI) for the output image.
+        DPI range: 72 to 600.
+        Higher DPI values result in higher resolution images.
+
+6. Selecting Save Directory
+
+    By default, TokenTally saves the generated images in the same directory as the original image.
+
+    To choose a different save location:
+        Click the "Select Save Directory" button.
+        In the directory selection dialog, navigate to the desired folder.
+        Click "Select Folder".
+        The chosen directory path will appear next to the button.
+
+7. Saving the Image(s)
+
+    Once you have configured all settings and are satisfied with the preview:
+        Click the "Save as PNG" button at the bottom of the application window.
+        TokenTally will process the image(s) and save them to the specified directory.
+        A confirmation message will appear upon successful saving.
+
+    Output Filenames:
+        The generated images will be saved with filenames based on the original image's name and the overlay numbers.
+        Example: If the original image is token.png and you're generating numbers from 1 to 5, the output files will be token1.png, token2.png, ..., token5.png.
+
+Troubleshooting
+
+    Application Does Not Start:
+
+        Ensure you have Python 3.x installed.
+
+        Verify that PyQt5 is installed correctly by running:
+
+    pip install PyQt5
+
+Cannot Import PyQt5 Module:
+
+    There might be conflicting versions of PyQt5.
+
+    Try reinstalling PyQt5:
+
+    pip uninstall PyQt5
+    pip install PyQt5
+
+Drag and Drop Not Working:
+
+    Ensure you're dragging the image over the image preview area.
+    Verify that the image file is one of the supported formats: .webp, .png, .jpg, .jpeg.
+    On some operating systems, running the application with elevated privileges can interfere with drag and drop. Run the application with standard user privileges.
+
+Overlay Text Not Appearing:
+
+    Make sure you've entered text in the "Enter 1 or 2 Digits:" field.
+    Check that the font size is not too small.
+    Verify that the font color contrasts with the image background.
+
+Saved Images Not Found:
+
+    Confirm the save directory path displayed next to the "Select Save Directory" button.
+    If no directory is selected, images are saved in the same folder as the original image.
+
+Error Messages:
+
+    If an error message appears, read the details provided.
+    Common issues include unsupported image formats or problems saving files due to permissions.
+    Ensure you have write permissions to the save directory.
